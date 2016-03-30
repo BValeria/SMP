@@ -47,9 +47,90 @@ int     21h
 jmp     ShowMenu 
 
 ShowPainting:
+mov ax,0600h         ;Scroll
+mov bh,07
+mov cx,0000
+mov dx,184fh
+int 10h              ;Intrerupere: Goleste ecran 
 
-int     21h   
-jmp     ShowMenu
+mov ah,00
+mov al,13h
+int 10h              ;Intrerupere: Schimbare mod
+
+;Desenare linie sus casa
+mov cx,130           ;Coloana de inceput este 130
+mov dx,75            ;Linia de inceput este 75
+
+Top:
+mov ah,0ch           ;Deseneaza o linie
+mov al,07h           ;Pixelul va fi gri deschis
+int 10h              
+inc cx               ;Incrementeaza pozitia orizontala
+cmp cx,216           ;Se continua linia pana se ajunge la coloana 216
+jnz Top             ;Continua daca nu s-a ajuns la coloana 216
+
+;Desenare linie jos casa
+mov cx,130           ;Coloana de inceput este 130
+mov dx,125           ;Linia de inceput este 125
+
+Bottom:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx 
+cmp cx,216
+jnz Bottom
+
+;Desenare linie verticala stanga casa
+mov cx,130           ;Coloana de inceput este 130
+mov dx,75            ;Linia de inceput este 75
+Left:
+mov ah,0ch
+mov al,07h
+int 10h
+inc dx 
+cmp dx,125
+jnz Left
+
+;Desenare linie verticala dreapta casa
+mov cx,216           ;Coloana de inceput este 216
+mov dx,75            ;Linia de inceput este 75
+Right:
+mov ah,0ch
+mov al,07h
+int 10h
+inc dx 
+cmp dx,126
+jnz Right
+
+;Desenare linie stanga  acoperis
+mov cx, 130
+mov dx,75
+LeftRoof:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+dec dx
+cmp cx,173
+cmp dx,32
+jnz LeftRoof
+
+;Desenare linie dreapta acoperis
+mov cx,173
+mov dx,32 
+RighRoof:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+inc dx
+cmp cx,216
+cmp dx,75
+jnz RighRoof
+
+
+jmp ShowMenu
 
 
 Quit:
