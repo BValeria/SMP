@@ -14,42 +14,63 @@ msg1    db      10, 13, 10, 13, "Please select an item:",0Dh,0Ah,0Dh,0Ah,09h
  db     "Enter item number: "
  db     '$'  
 
-About   db      10, 13, 10, 13, "Text about the project!$"
-
+linefeed db 13, 10,13,10, " $"
 .code
 
 main proc  
-mov ax,@data   ;Se incarca adresa datelor (optiunea aleasa)
-mov ds,ax      ;Se copiaza in registrul de segmentpentru a se putea accesa datele
+mov ax,@data        ;Se incarca adresa datelor (optiunea aleasa)
+mov ds,ax           ;Se copiaza in registrul de segmentpentru a se putea accesa datele
 
 ShowMenu:  
 mov ah, 02
-mov dl, 07h        ;07h valoarea ce produce beep-ul
-int 21h            ;Se produce sunetul  
+mov dl, 07h         ;07h valoarea ce produce beep-ul
+int 21h             ;Se produce sunetul  
   
-lea dx, msg1   ;Obinerea adresei variabilei
+lea dx, msg1        ;Obinerea adresei variabilei
 mov ah, 09h    
-int 21h        ;Intrerupere pentru operatia de INPUT    
+int 21h             ;Intrerupere pentru operatia de INPUT    
 
 GetNum:       
-mov ah, 1       ;Citire caracter (optiunea aleasa) 
+mov ah, 1           ;Citire caracter (optiunea aleasa) 
 int 21h
  
 
-cmp al, "1"     ;Verificare daca s-a ales optiunea1  
-je  ShowAbout   ;Jump daca primul operator este egal cu 1
+cmp al, "1"         ;Verificare daca s-a ales optiunea1  
+je  ShowAbout       ;Jump daca primul operator este egal cu 1
  
-cmp al, "2"     ;Verificare daca s-a ales optiunea2
+cmp al, "2"         ;Verificare daca s-a ales optiunea2
 je  ShowPainting1
  
-cmp al, "3"     ;Verificare daca s-a ales optiunea3
+cmp al, "3"         ;Verificare daca s-a ales optiunea3
 jmp Quit
 
-Showabout:      
-lea dx, About   ;Obtinere adresa About
-mov ah, 09h     ;Functie de display
-int 21h   
-jmp ShowMenu 
+Showabout:
+mov ah, 09          ;Inserare linie noua
+mov dx, offset linefeed
+int 21h
+      
+mov dx, offset file ;Se salveaza adresa fisierului in dx
+mov al,0            ;Atributul de read-only
+mov ah,3Dh          ;3Dh salveaza handler-ul automat in ax
+int 21h 
+
+mov bx,ax ; put handler to file in bx
+mov cx,1            ;Citeste cate un caracter  
+
+print:
+lea dx, BUF
+mov ah,3fh           ;Citeste din fisierul deschis (its handler in bx)
+int 21h
+CMP AX, 0            ;Verifica numarul de bytes transferati
+JZ ShowMenu  
+
+mov al, BUF 
+mov ah,0eh           ;Afiseaza caracter (teletype).
+int 10h
+jmp print            ;Citeste si afiseaza pana la sfarsitul fisierului.
+
+file db "test1.txt"
+BUF db ?
 
 ShowPainting1:
 mov ah,00
