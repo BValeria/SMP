@@ -18,44 +18,43 @@ About   db      10, 13, 10, 13, "Text about the project!$"
 
 .code
 
-main proc
- mov    ax,@data   ;Se incarca adresa datelor (optiunea aleasa)
- mov    ds,ax      ;Se copiaza in registrul de segmentpentru a se putea accesa datele
+main proc  
+mov ax,@data   ;Se incarca adresa datelor (optiunea aleasa)
+mov ds,ax      ;Se copiaza in registrul de segmentpentru a se putea accesa datele
 
-ShowMenu:      
- lea     dx, msg1   ;Obinerea adresei variabilei
- mov     ah, 09h
- int     21h        ;Intrerupere pentru operatia de INPUT    
+ShowMenu:  
+mov ah, 02
+mov dl, 07h        ;07h valoarea ce produce beep-ul
+int 21h            ;Se produce sunetul  
+  
+lea dx, msg1   ;Obinerea adresei variabilei
+mov ah, 09h    
+int 21h        ;Intrerupere pentru operatia de INPUT    
 
 GetNum:       
-mov     ah, 1       ;Citire caracter (optiunea aleasa)
-int     21h       
+mov ah, 1       ;Citire caracter (optiunea aleasa) 
+int 21h
+ 
 
-cmp     al, "1"     ;Verificare daca s-a ales optiunea1
-je      ShowAbout   ;Jump daca primul operator este egal cu 1
+cmp al, "1"     ;Verificare daca s-a ales optiunea1  
+je  ShowAbout   ;Jump daca primul operator este egal cu 1
  
-cmp     al, "2"     ;Verificare daca s-a ales optiunea2
-je      ShowPainting1
+cmp al, "2"     ;Verificare daca s-a ales optiunea2
+je  ShowPainting1
  
-cmp     al, "3"     ;Verificare daca s-a ales optiunea3
-jmp     Quit
+cmp al, "3"     ;Verificare daca s-a ales optiunea3
+jmp Quit
 
 Showabout:      
-lea     dx, About   ;Obtinere adresa About
-mov     ah, 09h     ;Functie de display
-int     21h   
-jmp     ShowMenu 
+lea dx, About   ;Obtinere adresa About
+mov ah, 09h     ;Functie de display
+int 21h   
+jmp ShowMenu 
 
 ShowPainting1:
-mov ax,0600h         ;Scroll
-mov bh,07
-mov cx,0000
-mov dx,184fh
-int 10h              ;Intrerupere: Goleste ecran 
-
 mov ah,00
-mov al,13h
-int 10h              ;Intrerupere: Schimbare mod
+mov al,13h           ;codul seviciului video
+int 10h              ;Schimbare in mod grafic :servicii video
 
 ;Desenare linie sus casa
 mov cx,130           ;Coloana de inceput este 130
@@ -295,13 +294,14 @@ inc cx
 cmp cx,211
 jnz RightWindow6
 
-int 10h
-jmp ShowMenu
-
+mov ah,00h       ;Golire ecran
+int 10h  
+ 
+jmp ShowMenu 
 
 Quit:
-mov   ah,4ch        ;Functie DOS de Exit
-int   21h  
+mov ah,4ch        ;Functie DOS de Exit
+int 21h  
 
 main endp
 end main
