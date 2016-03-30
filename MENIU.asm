@@ -35,7 +35,7 @@ cmp     al, "1"     ;Verificare daca s-a ales optiunea1
 je      ShowAbout   ;Jump daca primul operator este egal cu 1
  
 cmp     al, "2"     ;Verificare daca s-a ales optiunea2
-je      ShowPainting
+je      ShowPainting1
  
 cmp     al, "3"     ;Verificare daca s-a ales optiunea3
 jmp     Quit
@@ -46,7 +46,7 @@ mov     ah, 09h     ;Functie de display
 int     21h   
 jmp     ShowMenu 
 
-ShowPainting:
+ShowPainting1:
 mov ax,0600h         ;Scroll
 mov bh,07
 mov cx,0000
@@ -129,7 +129,173 @@ cmp cx,216
 cmp dx,75
 jnz RighRoof
 
+;Desenare linie stanga usa 
+mov cx,164
+mov dx,125 
+LeftDor:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,100
+jnz LeftDor 
 
+;Desenare linie dreapta usa 
+mov cx,182
+mov dx,125 
+RightDor:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,100
+jnz RightDor
+
+;Desenare linie sus usa 
+mov cx,164
+mov dx,100 
+TopDor:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,183
+jnz TopDor
+
+;Desenare linie verticala1 fereastra stanga
+mov cx,151
+mov dx,95
+LeftWindow1:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz LeftWindow1
+
+;Desenare linie verticala2 fereastra stanga
+mov cx,143
+mov dx,95
+LeftWindow2:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz LeftWindow2
+
+;Desenare linie verticala3 fereastra stanga
+mov cx,135
+mov dx,95
+LeftWindow3:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz LeftWindow3
+
+;Desenare linie orizontala1 fereastra stanga 
+mov cx,135
+mov dx,85
+LeftWindow4:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,151
+jnz LeftWindow4
+
+;Desenare linie orizontala2 fereastra stanga
+mov cx,135
+mov dx,90
+LeftWindow5:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,151
+jnz LeftWindow5
+ 
+;Desenare linie orizontala3 fereastra stranga
+mov cx,135
+mov dx,95
+LeftWindow6:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,151
+jnz LeftWindow6 
+
+
+;Desenare linie verticala1 fereastra dreapta
+mov cx,195
+mov dx,95
+RightWindow1:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz RightWindow1
+
+;Desenare linie verticala2 fereastra dreapta
+mov cx,203
+mov dx,95
+RightWindow2:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz RightWindow2
+
+;Desenare linie verticala3 fereastra dreapta
+mov cx,211
+mov dx,95
+RightWindow3:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx
+cmp dx,85
+jnz RightWindow3
+
+;Desenare linie orizontala1 fereastra dreapta
+mov cx,195
+mov dx,85
+RightWindow4:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,211
+jnz RightWindow4
+
+;Desenare linie orizontala2 fereastra dreapta
+mov cx,195
+mov dx,90
+RightWindow5:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,211
+jnz RightWindow5
+ 
+;Desenare linie orizontala3 fereastra dreapta
+mov cx,195
+mov dx,95
+RightWindow6:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx
+cmp cx,211
+jnz RightWindow6
+
+int 10h
 jmp ShowMenu
 
 
