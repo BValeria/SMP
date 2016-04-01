@@ -317,6 +317,9 @@ jnz RightWindow6
 
 mov ah,00h       ;Golire ecran
 int 10h  
+
+mov ah,0         ;Trecere in mod text
+int 16h
  
 jmp ShowMenu 
 
