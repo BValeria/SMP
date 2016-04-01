@@ -21,7 +21,7 @@ main proc
 mov ax,@data        ;Se incarca adresa datelor (optiunea aleasa)
 mov ds,ax           ;Se copiaza in registrul de segmentpentru a se putea accesa datele
 
-ShowMenu:  
+ShowMenu: 
 mov ah, 02
 mov dl, 07h         ;07h valoarea ce produce beep-ul
 int 21h             ;Se produce sunetul  
@@ -40,9 +40,9 @@ je  ShowAbout       ;Jump daca primul operator este egal cu 1
  
 cmp al, "2"         ;Verificare daca s-a ales optiunea2
 je  ShowPainting1
- 
-cmp al, "3"         ;Verificare daca s-a ales optiunea3
-jmp Quit
+
+cmp al,"3"          ;Verificare daca s-a ales optiunea3
+jmp Quit   
 
 Showabout:
 mov ah, 09          ;Inserare linie noua
@@ -54,7 +54,7 @@ mov al,0            ;Atributul de read-only
 mov ah,3Dh          ;3Dh salveaza handler-ul automat in ax
 int 21h 
 
-mov bx,ax ; put handler to file in bx
+mov bx,ax           ; put handler to file in bx
 mov cx,1            ;Citeste cate un caracter  
 
 print:
@@ -62,7 +62,7 @@ lea dx, BUF
 mov ah,3fh           ;Citeste din fisierul deschis (its handler in bx)
 int 21h
 CMP AX, 0            ;Verifica numarul de bytes transferati
-JZ ShowMenu  
+je ShowMenu 
 
 mov al, BUF 
 mov ah,0eh           ;Afiseaza caracter (teletype).
@@ -72,9 +72,10 @@ jmp print            ;Citeste si afiseaza pana la sfarsitul fisierului.
 file db "test1.txt"
 BUF db ?
 
+
 ShowPainting1:
 mov ah,00
-mov al,13h           ;codul seviciului video
+mov al,13h           ;codul seviciului video 
 int 10h              ;Schimbare in mod grafic :servicii video
 
 ;Desenare linie sus casa
@@ -315,11 +316,15 @@ inc cx
 cmp cx,211
 jnz RightWindow6
 
+
 mov ah,00h       ;Golire ecran
+
+;mov ah,0
+;int 16h
+
+mov al,03h       ; trecere in mod text
 int 10h  
 
-mov ah,0         ;Trecere in mod text
-int 16h
  
 jmp ShowMenu 
 
@@ -330,6 +335,11 @@ int 21h
 main endp
 end main
 ret
+
+
+
+
+
 
 
 
