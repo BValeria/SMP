@@ -9,19 +9,20 @@ org 100h
 ;Afisare meniu
 msg1    db      10, 13, 10, 13, "Please select an item:",0Dh,0Ah,0Dh,0Ah,09h
  db     "1- Show Project Description",0Dh,0Ah,09h     
- db     "2- Show drowing",0Dh,0Ah,09h 
- db     "3- Exit",0Dh,0Ah,09h
+ db     "2- Show drawing",0Dh,0Ah,09h    
+ db     "3- Play",0Dh,0Ah,09h
+ db     "4- Exit",0Dh,0Ah,09h
  db     "Enter item number: "
  db     '$'  
 
-linefeed db 13, 10,13,10, " $"
+enter db 13, 10,13,10, " $"  
+deplasare equ 5 
 .code
-
-main proc  
+ 
 mov ax,@data        ;Se incarca adresa datelor (optiunea aleasa)
 mov ds,ax           ;Se copiaza in registrul de segmentpentru a se putea accesa datele
 
-ShowMenu: 
+ShowMenu:  
 mov ah, 02
 mov dl, 07h         ;07h valoarea ce produce beep-ul
 int 21h             ;Se produce sunetul  
@@ -39,14 +40,17 @@ cmp al, "1"         ;Verificare daca s-a ales optiunea1
 je  ShowAbout       ;Jump daca primul operator este egal cu 1
  
 cmp al, "2"         ;Verificare daca s-a ales optiunea2
-je  ShowPainting1
+je  ShowPainting1       
 
-cmp al,"3"          ;Verificare daca s-a ales optiunea3
+cmp al, "3"         ;Verificare daca s-a ales optiunea3
+je  Play
+
+cmp al,"4"          ;Verificare daca s-a ales optiunea4
 jmp Quit   
 
-Showabout:
+Showabout: 
 mov ah, 09          ;Inserare linie noua
-mov dx, offset linefeed
+mov dx, offset enter;enter
 int 21h
       
 mov dx, offset file ;Se salveaza adresa fisierului in dx
@@ -54,14 +58,14 @@ mov al,0            ;Atributul de read-only
 mov ah,3Dh          ;3Dh salveaza handler-ul automat in ax
 int 21h 
 
-mov bx,ax           ; put handler to file in bx
+mov bx,ax           ;put handler to file in bx
 mov cx,1            ;Citeste cate un caracter  
 
 print:
 lea dx, BUF
 mov ah,3fh           ;Citeste din fisierul deschis (its handler in bx)
 int 21h
-CMP AX, 0            ;Verifica numarul de bytes transferati
+cmp ax, 0            ;Verifica numarul de bytes transferati
 je ShowMenu 
 
 mov al, BUF 
@@ -71,7 +75,6 @@ jmp print            ;Citeste si afiseaza pana la sfarsitul fisierului.
 
 file db "test1.txt"
 BUF db ?
-
 
 ShowPainting1:
 mov ah,00
@@ -88,7 +91,7 @@ mov al,07h           ;Pixelul va fi gri deschis
 int 10h              
 inc cx               ;Incrementeaza pozitia orizontala
 cmp cx,216           ;Se continua linia pana se ajunge la coloana 216
-jnz Top             ;Continua daca nu s-a ajuns la coloana 216
+jnz Top              ;Continua daca nu s-a ajuns la coloana 216
 
 ;Desenare linie jos casa
 mov cx,130           ;Coloana de inceput este 130
@@ -316,24 +319,107 @@ inc cx
 cmp cx,211
 jnz RightWindow6
 
+mov ah,01h       ;Asteptare caracter
+int 21h
 
 mov ah,00h       ;Golire ecran
-
-;mov ah,0
-;int 16h
-
-mov al,03h       ; trecere in mod text
+mov al,03h       ;Trecere in mod text
 int 10h  
 
- 
 jmp ShowMenu 
 
+Play:
+mov ah, 0h      ;setting video mode
+mov al, 03h     ;text mode, 80x25    
+int 10h
+call colorare
+mov ch, 0       ;De unde incep sa desenez patratul
+mov cl, 0
+mov dh, 5       ;Dimensiunile patratului
+mov dl, 5 
+push cx         ;Salvam coordonatele 
+push dx
+mov bh, 0eeh    ;Schimbare culoare patrat in galben
+int 10h
+
+choose:
+;Alege directie deplasare
+mov ah, 1
+mov bh, 32
+int 21h
+cmp al, 'e'
+je menu
+cmp al, 'r'
+je R 
+cmp al, 'l'
+je L
+
+R: 
+;Deplasare spre dreapta
+call colorare
+mov bh, 0eeh           ;Culoarea patratului devine galben
+mov ch, 0              ;Deplasarea se face pe aceeasi linie
+pop dx                 ;Verific ultima pozitie (pe verticala) a patratului
+add dl, deplasare      ;Adaug deplasare
+pop cx 
+add cl, deplasare
+mov dh, 5              ;Mentinerea dimensiunii
+push cx                ;Salvare coordonate 
+push dx
+int 10h
+call beep 
+jmp choose 
+
+L:
+;deplasare spre stanga
+call colorare 
+mov bh, 0eeh
+mov ch, 0
+pop dx
+sub dl, deplasare
+pop cx 
+sub cl, deplasare
+mov dh, 5
+push cx
+push dx
+int 10h
+call beep
+jmp choose 
+
+menu: 
+;Revenire la meniu       
+
+mov ah,00h          ;Golire ecran   
+mov al,03h          ;Trecere in mod text
+int 10h  
+jmp ShowMenu
+
+beep PROC
+;Realizare sunet  
+mov ah,02
+mov dl, 07h         ;07h valoarea ce produce beep-ul
+int 21h             ;Se produce sunetul
+ret
+beep ENDP 
+
+colorare PROC ; coloreaza fundalul cu verde
+mov al, 0  
+mov ah, 6
+mov bh, 0h          ;Colorare ecran negru
+mov ch, 0           ;De unde se seteaza ecranul
+mov cl, 0 
+                     
+mov dh, 25          ;Dimensiuni ecran
+mov dl, 80 
+int 10h 
+ret 
+colorare ENDP 
+
 Quit:
-mov ah,4ch        ;Functie DOS de Exit
+mov ah,4ch           ;Functie DOS de Exit
 int 21h  
 
-main endp
-end main
+
 ret
 
 
