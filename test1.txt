@@ -1,0 +1,11 @@
+Proiectul indeplineste urmatoarele cerinte:
+1.program x86 pe 16biti in EMU8086
+2.utilizare tastatura in regim interactiv
+3.grafica simpla 2D
+4.sunet
+5.comentarii/identare
+6.utilizarea unui sistem de control al versiunilor (git)
+7.aducerea temei mai devreme
+
+Extra:
+-Citire din fisier
