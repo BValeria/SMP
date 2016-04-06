@@ -102,16 +102,27 @@ inc cx               ;Incrementeaza pozitia orizontala
 cmp cx,216           ;Se continua linia pana se ajunge la coloana 216
 jnz Top              ;Continua daca nu s-a ajuns la coloana 216
 
+;Desenare linie verticala dreapta casa
+mov cx,216           ;Coloana de inceput este 216
+mov dx,75            ;Linia de inceput este 75
+Right:
+mov ah,0ch
+mov al,07h
+int 10h
+inc dx 
+cmp dx,126
+jnz Right
+
 ;Desenare linie jos casa
-mov cx,130           ;Coloana de inceput este 130
+mov cx,216           ;Coloana de inceput este 130
 mov dx,125           ;Linia de inceput este 125
 
 Bottom:
 mov ah,0ch
 mov al,07h
 int 10h
-inc cx 
-cmp cx,216
+dec cx 
+cmp cx,130
 jnz Bottom
 
 ;Desenare linie verticala stanga casa
@@ -125,17 +136,6 @@ inc dx
 cmp dx,125
 jnz Left
 
-;Desenare linie verticala dreapta casa
-mov cx,216           ;Coloana de inceput este 216
-mov dx,75            ;Linia de inceput este 75
-Right:
-mov ah,0ch
-mov al,07h
-int 10h
-inc dx 
-cmp dx,126
-jnz Right
-
 ;Desenare linie stanga  acoperis
 mov cx, 130
 mov dx,75
@@ -147,7 +147,7 @@ inc cx
 dec dx
 cmp cx,173
 cmp dx,32
-jnz LeftRoof
+jnz LeftRoof   
 
 ;Desenare linie dreapta acoperis
 mov cx,173
@@ -160,7 +160,40 @@ inc cx
 inc dx
 cmp cx,216
 cmp dx,75
-jnz RighRoof
+jnz RighRoof  
+
+;Desenare linie1 cos
+mov cx,190           ;Coloana de inceput este 216
+mov dx,46           ;Linia de inceput este 75
+Cos1:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx 
+cmp dx,30    
+jnz Cos1 
+
+;Desenare linie2 cos
+mov cx,190           ;Coloana de inceput este 216
+mov dx,30           ;Linia de inceput este 75
+Cos2:
+mov ah,0ch
+mov al,07h
+int 10h
+inc cx 
+cmp cx,200    
+jnz Cos2 
+
+;Desenare linie3 cos
+mov cx,200           ;Coloana de inceput este 216
+mov dx,59           ;Linia de inceput este 75
+Cos3:
+mov ah,0ch
+mov al,07h
+int 10h
+dec dx 
+cmp dx,30    
+jnz Cos3 
 
 ;Desenare linie stanga usa 
 mov cx,164
