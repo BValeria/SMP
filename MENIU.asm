@@ -1,6 +1,7 @@
 
 org 100h
 
+INCLUDE 'emu8086.inc'
 .model small
 .stack 100h
 
@@ -10,8 +11,9 @@ org 100h
 msg1    db      10, 13, 10, 13, "Please select an item:",0Dh,0Ah,0Dh,0Ah,09h
  db     "1- Show Project Description",0Dh,0Ah,09h     
  db     "2- Show drawing",0Dh,0Ah,09h    
- db     "3- Play",0Dh,0Ah,09h
- db     "4- Exit",0Dh,0Ah,09h
+ db     "3- Play",0Dh,0Ah,09h  
+ db     "4- Moving around",0Dh,0Ah,09h
+ db     "5- Exit",0Dh,0Ah,09h
  db     "Enter item number: "
  db     '$'  
 
@@ -46,7 +48,14 @@ cmp al, "3"         ;Verificare daca s-a ales optiunea3
 je  Play
 
 cmp al,"4"          ;Verificare daca s-a ales optiunea4
-jmp Quit   
+jmp ddd
+ 
+cmp al,"5"          ;Verificare daca s-a ales optiunea4
+jmp Quit 
+
+ddd:   
+;AICI TREBUIE SA PUI CEVAAAAAAAAAAAAAAAAAAAAAAAAAA
+jmp ShowMenu
 
 Showabout: 
 mov ah, 09          ;Inserare linie noua
@@ -319,27 +328,27 @@ inc cx
 cmp cx,211
 jnz RightWindow6
 
-mov ah,01h       ;Asteptare caracter
+mov ah,01h           ;Asteptare caracter
 int 21h
 
-mov ah,00h       ;Golire ecran
-mov al,03h       ;Trecere in mod text
-int 10h  
+mov ah,00h           ;Golire ecran
+mov al,03h           ;Trecere in mod text
+int 10h             
 
 jmp ShowMenu 
 
 Play:
-mov ah, 0h      ;setting video mode
-mov al, 03h     ;text mode, 80x25    
+mov ah, 0h           ;setting video mode
+mov al, 03h          ;text mode, 80x25    
 int 10h
 call colorare
-mov ch, 0       ;De unde incep sa desenez patratul
+mov ch, 0            ;De unde incep sa desenez patratul
 mov cl, 0
-mov dh, 5       ;Dimensiunile patratului
+mov dh, 5            ;Dimensiunile patratului
 mov dl, 5 
-push cx         ;Salvam coordonatele 
+push cx              ;Salvam coordonatele 
 push dx
-mov bh, 0eeh    ;Schimbare culoare patrat in galben
+mov bh, 0eeh         ;Schimbare culoare patrat in galben
 int 10h
 
 choose:
@@ -350,16 +359,20 @@ int 21h
 cmp al, 'e'
 je menu
 cmp al, 'r'
-je R 
+je R   
 cmp al, 'l'
-je L
+je L  
+cmp al, 'u'
+je U
+cmp al, 'd'
+je D
 
 R: 
 ;Deplasare spre dreapta
-call colorare
+call colorare 
+
 mov bh, 0eeh           ;Culoarea patratului devine galben
-mov ch, 0              ;Deplasarea se face pe aceeasi linie
-pop dx                 ;Verific ultima pozitie (pe verticala) a patratului
+pop dx                 ;Verific ultima pozitie a patratului
 add dl, deplasare      ;Adaug deplasare
 pop cx 
 add cl, deplasare
@@ -373,8 +386,7 @@ jmp choose
 L:
 ;deplasare spre stanga
 call colorare 
-mov bh, 0eeh
-mov ch, 0
+mov bh, 0ddh           ;Colorare patrat roz
 pop dx
 sub dl, deplasare
 pop cx 
@@ -382,41 +394,76 @@ sub cl, deplasare
 mov dh, 5
 push cx
 push dx
-int 10h
-call beep
+int 10h  
+call beep 
 jmp choose 
+
+D:
+call colorare 
+mov bh, 0cch           ;Colorare patrat roz
+pop dx 
+add dh,deplasare       ;Deplasare in jos
+pop cx 
+add ch,deplasare
+add cl,0
+push cx
+push dx
+int 10h  
+call beep 
+jmp choose 
+
+U:
+call colorare 
+mov bh, 0bbh           ;Colorare patrat albastru    
+pop dx 
+sub dh,deplasare       ;Deplasare in sus
+pop cx
+sub ch,deplasare
+add cl,0
+push cx
+push dx
+int 10h 
+call beep
+jmp choose  
 
 menu: 
 ;Revenire la meniu       
+mov al, 0
+mov ah, 6
+mov bh, 7              ;Colorare text    
+mov ch, 0
+mov cl, 0
+mov dh, 25
+mov dl, 80
+int 10h
 
-mov ah,00h          ;Golire ecran   
-mov al,03h          ;Trecere in mod text
+mov ax,3               ;Trecere in mod text 80x25  
 int 10h  
 jmp ShowMenu
 
 beep PROC
 ;Realizare sunet  
 mov ah,02
-mov dl, 07h         ;07h valoarea ce produce beep-ul
-int 21h             ;Se produce sunetul
+mov dl, 07h            ;07h valoarea ce produce beep-ul
+int 21h                ;Se produce sunetul
 ret
 beep ENDP 
 
-colorare PROC ; coloreaza fundalul cu verde
+colorare PROC 
+;Setari pentru fundal
 mov al, 0  
 mov ah, 6
-mov bh, 0h          ;Colorare ecran negru
-mov ch, 0           ;De unde se seteaza ecranul
+mov bh, 0h            ;Colorare ecran negru
+mov ch, 0             ;De unde se seteaza ecranul
 mov cl, 0 
-                     
-mov dh, 25          ;Dimensiuni ecran
+mov dh, 25            ;Dimensiuni ecran
 mov dl, 80 
 int 10h 
 ret 
 colorare ENDP 
 
 Quit:
-mov ah,4ch           ;Functie DOS de Exit
+mov ah,4ch            ;Functie DOS de Exit
 int 21h  
 
 
