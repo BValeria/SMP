@@ -479,6 +479,7 @@ mov cl, 0
 mov dh, 25             ;Dimensiunile ecranului
 mov dl, 80
 int 10h
+jmp ShowMenu
 
 beep PROC
 ;Realizare sunet  
@@ -500,8 +501,8 @@ mov dl, 80
 int 10h 
 ret 
 colorare ENDP 
-      
-      
+
+
 ;OPTIUNEA 4 - animatie
 
 MoveAround:   
@@ -558,10 +559,11 @@ Pozitionare 12,48 ,15 ,55 ,cyan
 Pozitionare 13,24,15,47,cyan
 Pozitionare 11,24,14,31 ,cyan
 
-Pozitionare 12,32,12 ,47 ,magenta  
+Pozitionare 12,32,12 ,47 ,magenta
 call beep
-jmp go 
+jmp go
 
+      
 ;OPTIUNEA 5 - exit
 
 Quit:
