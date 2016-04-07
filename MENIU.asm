@@ -10,8 +10,8 @@ INCLUDE 'emu8086.inc'
 ;Afisare meniu
 msg1    db      10, 13, 10, 13, "Please select an item:",0Dh,0Ah,0Dh,0Ah,09h
  db     "1- Show Project Description",0Dh,0Ah,09h     
- db     "2- Show drawing",0Dh,0Ah,09h    
- db     "3- Play",0Dh,0Ah,09h  
+ db     "2- Show drawing",0Dh,0Ah,09h   
+ db     "3- Play" ,0Dh,0Ah,09h 
  db     "4- Moving around",0Dh,0Ah,09h
  db     "5- Exit",0Dh,0Ah,09h
  db     "Enter item number: "
@@ -480,10 +480,6 @@ mov dh, 25             ;Dimensiunile ecranului
 mov dl, 80
 int 10h
 
-mov ax,3               ;Trecere in mod text 80x25  
-int 10h  
-jmp ShowMenu
-
 beep PROC
 ;Realizare sunet  
 mov ah,02
@@ -509,15 +505,15 @@ colorare ENDP
 ;OPTIUNEA 4 - animatie
 
 MoveAround:   
-mov ah, 0           ;trecere in mod video
+mov ah, 0             ;Trecere in mod video
 mov al, 03h
 int 10h
 mov al, 0             
 mov ah, 6   
-mov bh, 0h           ;Se coloreaza fundalul in albastru
+mov bh, 0h            ;Se coloreaza fundalul in albastru
 mov ch, 0
 mov cl, 0
-mov dh, 24           ;Se definesc dimensiunile ecranului
+mov dh, 24            ;Se definesc dimensiunile ecranului
 mov dl, 79  
 int 10h     
 
@@ -530,11 +526,11 @@ cmp al, 'g'
 je movee
 
 Pozitionare MACRO a1,a2,a3,a4,a5
-mov bh, a5       ;Reprezinta culoarea 
-mov ch, a1       ;De la ce linie incepe desenarea
-mov cl, a2       ;De la ce coloana incepe desenarea 
-mov dh, a3       ;Pana la ce linie se executa desenarea
-mov dl, a4       ;Pana la ce coloana se executa desenarea
+mov bh, a5           ;Reprezinta culoarea 
+mov ch, a1           ;De la ce linie incepe desenarea
+mov cl, a2           ;De la ce coloana incepe desenarea 
+mov dh, a3           ;Pana la ce linie se executa desenarea
+mov dl, a4           ;Pana la ce coloana se executa desenarea
 int 10h
 ENDM 
 
